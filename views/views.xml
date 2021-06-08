@@ -1,0 +1,142 @@
+<odoo>
+<data>
+<!-- ################# -->
+<!-- BUKU -->
+<!-- ################# -->
+ 
+<record id="buku_tree_view" model="ir.ui.view">
+    <field name="name">buku.tree</field>
+    <field name="model">product.product</field>
+    <field name="arch" type="xml">
+        <tree string="Buku">
+            <field name="default_code"/>
+            <field name="name"/>
+            <!-- <field name="publisher_id"/>
+            <field name="author_id"/> -->
+            <field name="location_id"/>
+            <field name="categ_id"/>
+            <!-- <field name="state"/> -->
+        </tree>
+    </field>
+</record>
+ 
+ <record id="buku_form_view" model="ir.ui.view">
+    <field name="name">buku.form</field>
+    <field name="model">product.product</field>
+    <field name="arch" type="xml">
+        <form string="Buku">
+            <header>
+                <!-- <field name="state" widget="statusbar" statusbar_colors='{"draft":"red","approve":"blue"}'/> -->
+            </header>
+ 
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                    </button>
+                </div>
+                <!-- <field name="image" widget='image' class="oe_avatar" options='{"preview_image": "image_medium", "size": [90, 90]}'/> -->
+                <h1>
+                    <field name="name" default_focus="1" placeholder="Name" required="1"/>
+                </h1>
+                <group>
+                    <!-- <field name="publisher_id"/>
+                    <field name="author_id"/> -->
+                    <field name="location_id"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="default_code"/>
+                        <field name="categ_id"/>
+                        <!-- <field name="isbn"/> -->
+                        <!-- <field name="catalog_num"/> -->
+                    </group>
+                    <group>
+                        <field name="barcode"/>
+                        <!-- <field name="nbpage"/> -->
+                        <!-- <field name="num_edition"/> -->
+                        <!-- <field name="lang"/> -->
+                    </group>
+                </group>
+                <group string="Review" colspan="4">
+                    <!-- <field name="resensi" nolabel="1" colspan="4"/> -->
+                </group>
+ 
+            </sheet>
+        </form>
+    </field>
+</record>
+ 
+<record model="ir.ui.view" id="buku_kanban_view">
+    <field name="name">buku.kanban</field>
+    <field name="model">product.product</field>
+    <field name="arch" type="xml">
+        <kanban class="o_res_partner_kanban">
+            <field name="id"/>
+            <!-- <field name="image_small"/> -->
+            <field name="default_code"/>
+            <field name="barcode"/>
+            <templates>
+               <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_res_partner_kanban">
+                        <t t-if="record.image_small.raw_value">
+                            <div class="o_kanban_image_fill_left d-none d-md-block" t-attf-style="background-image:url('#{kanban_image('product.product', 'image_medium', record.id.raw_value)}')"/>
+                        </t>
+                        <div class="oe_kanban_details">
+                            <strong class="oe_partner_heading">
+                                <t t-if="record.default_code.value"><field name="default_code"/></t>
+                                <field name="name"/>
+                            </strong>
+                            <ul>
+                                <li t-if="record.barcode.raw_value"><field name="barcode"/></li>
+                                <!-- <li t-if="record.author_id.raw_value"><field name="author_id"/></li> -->
+                                <!-- <li t-if="record.publisher_id.raw_value"><field name="publisher_id"/></li> -->
+                                <li t-if="record.categ_id.raw_value"><field name="categ_id"/></li>
+                                <!-- <li t-if="record.state.raw_value"><field name="state" widget="kanban_label_selection" options="{'classes': {'available': 'success', 'rent': 'warning'}}"/></li> -->
+                            </ul>
+                        </div>
+                    </div>
+            </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+ 
+<record id="buku_buku_action" model="ir.actions.act_window">
+    <field name="name">Buku</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">product.product</field>
+    <field name="view_mode">kanban,tree,form</field>
+    <field name="view_id" ref="buku_kanban_view"/>
+</record>
+ <record id="action_kanban_view_buku" model="ir.actions.act_window.view">
+                  <field name="sequence" eval="1"/>
+                  <field name="view_mode">kanban</field>
+                  <field name="view_id" ref="buku_kanban_view"/>
+                  <field name="act_window_id" ref="buku_buku_action"/>
+              </record>
+
+              <record id="action_tree_view_buku" model="ir.actions.act_window.view">
+                  <field name="sequence" eval="2"/>
+                  <field name="view_mode">tree</field>
+                  <field name="view_id" ref="buku_tree_view"/>
+                  <field name="act_window_id" ref="buku_buku_action"/>
+              </record>
+
+              <record id="action_form_view_buku" model="ir.actions.act_window.view">
+                  <field name="sequence" eval="3"/>
+                  <field name="view_mode">form</field>
+                  <field name="view_id" ref="buku_form_view"/>
+                  <field name="act_window_id" ref="buku_buku_action"/>
+              </record>
+ 
+<!-- Menu Perpustakaan -->
+ 
+<menuitem id="menubar_perpustakaan" name="Perpustakaan"/>
+ 
+<menuitem id="menu_perpustakaan" name="Informasi" parent="menubar_perpustakaan"/>
+ 
+<menuitem id="submenu_books" name="Buku" parent="menu_perpustakaan" action="buku_buku_action"/>
+
+</data>
+</odoo>
